@@ -1,25 +1,28 @@
-# Maintainer: Kuba Serafinowski <zizzfizzix AT gmail DOT com>
+# Maintainer: Vanush Misha Paturyan <ektich+cfengine-aur@gmail.com>
 # https://github.com/zizzfizzix/pkgbuilds
 #
+# Contributor: Kuba Serafinowski <zizzfizzix AT gmail DOT com>
 # Contributor: Phillip Smith <fukawi2@NO-SPAM.gmail.com>
 # Contributor: Christian Berendt <christian@thorlin.de>
 
 pkgname=cfengine
-pkgver=3.6.5
+pkgver=3.7.2
 pkgrel=1
 pkgdesc='Automated suite of programs for configuring and maintaining Unix-like computers.'
 url='http://www.cfengine.org'
 license=('GPL3')
 arch=('i686' 'x86_64')
-depends=('liblmdb' 'openssl' 'pcre' 'libxml2')
+depends=('lmdb' 'openssl' 'pcre' 'libxml2')
 makedepends=('which')
 optdepends=('libvirt' 'postgresql-libs' 'libmariadbclient' 'acl')
 install=${pkgname}.install
-source=("${pkgname}-${pkgver}.tar.gz::https://s3.amazonaws.com/cfengine.package-repos/tarballs/${pkgname}-${pkgver}.tar.gz"
+source=("${pkgname}-${pkgver}.tar.gz::https://cfengine-package-repos.s3.amazonaws.com/tarballs/${pkgname}-${pkgver}.tar.gz"
+        "https://cfengine-package-repos.s3.amazonaws.com/tarballs/cfengine-masterfiles-${pkgver}.tar.gz"
         'cf-execd.service'
         'cf-monitord.service'
         'cf-serverd.service')
-md5sums=('76754e9aa7498a614012e0c064b37cbe'
+md5sums=('aff92abe87a5424680afd285d0384bef'
+         'dba17dc5133b8fa86de11577120d46c5'
          'dba17dc5133b8fa86de11577120d46c5'
          'a2f9db31408f288cb934397ffb474db3'
          'ff28f7de9b81b4673082a2640a318896')
