@@ -1,0 +1,262 @@
+From bc63fd570d7126d2737f13f96b2e251778c3f73c Mon Sep 17 00:00:00 2001
+From: Vanush Misha Paturyan <ektich@gmail.com>
+Date: Thu, 4 Jun 2015 15:09:19 +0100
+Subject: [PATCH 1/4] version 3.6.5 and lmdb
+
+build against liblmdb instead of qdbm and tokyocabinet
+---
+ PKGBUILD | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
+
+diff --git a/PKGBUILD b/PKGBUILD
+index 8ecf622..c7a490c 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -5,21 +5,21 @@
+ # Contributor: Christian Berendt <christian@thorlin.de>
+ 
+ pkgname=cfengine
+-pkgver=3.6.0
++pkgver=3.6.5
+ pkgrel=1
+ pkgdesc='Automated suite of programs for configuring and maintaining Unix-like computers.'
+ url='http://www.cfengine.org'
+ license=('GPL3')
+ arch=('i686' 'x86_64')
+-depends=('qdbm' 'openssl' 'pcre' 'libxml2')
++depends=('liblmdb' 'openssl' 'pcre' 'libxml2')
+ makedepends=('which')
+-optdepends=('tokyocabinet' 'libvirt' 'postgresql-libs' 'libmariadbclient' 'acl')
++optdepends=('libvirt' 'postgresql-libs' 'libmariadbclient' 'acl')
+ install=${pkgname}.install
+ source=("${pkgname}-${pkgver}.tar.gz::https://s3.amazonaws.com/cfengine.package-repos/tarballs/${pkgname}-${pkgver}.tar.gz"
+         'cf-execd.service'
+         'cf-monitord.service'
+         'cf-serverd.service')
+-md5sums=('42b0d3a90a1b60bf25cf63ccd6366f59'
++md5sums=('76754e9aa7498a614012e0c064b37cbe'
+          'dba17dc5133b8fa86de11577120d46c5'
+          'a2f9db31408f288cb934397ffb474db3'
+          'ff28f7de9b81b4673082a2640a318896')
+@@ -35,9 +35,8 @@ build() {
+     --with-libacl=check \
+     --with-libxml2 \
+     --with-libvirt=check \
+-    --with-qdbm \
++    --with-lmdb \
+     --with-mysql=check \
+-    --with-tokyocabinet=check \
+     --with-postgresql=check
+ 
+   make
+-- 
+2.7.0
+
+
+From 5e7232c526d1a2953e948120fb5a7798b15f8202 Mon Sep 17 00:00:00 2001
+From: "Vanush \"Misha\" Paturyan" <misha@cs.nuim.ie>
+Date: Fri, 19 Feb 2016 01:15:52 +0000
+Subject: [PATCH 2/4] upstream version 3.7.2
+
+also changing upstream's URL, and switching dependency from
+liblmdb to lmdb
+---
+ PKGBUILD | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
+
+diff --git a/PKGBUILD b/PKGBUILD
+index c7a490c..d314757 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -1,25 +1,28 @@
+-# Maintainer: Kuba Serafinowski <zizzfizzix AT gmail DOT com>
++# Maintainer: Vanush Misha Paturyan <ektich+cfengine-aur@gmail.com>
+ # https://github.com/zizzfizzix/pkgbuilds
+ #
++# Contributor: Kuba Serafinowski <zizzfizzix AT gmail DOT com>
+ # Contributor: Phillip Smith <fukawi2@NO-SPAM.gmail.com>
+ # Contributor: Christian Berendt <christian@thorlin.de>
+ 
+ pkgname=cfengine
+-pkgver=3.6.5
++pkgver=3.7.2
+ pkgrel=1
+ pkgdesc='Automated suite of programs for configuring and maintaining Unix-like computers.'
+ url='http://www.cfengine.org'
+ license=('GPL3')
+ arch=('i686' 'x86_64')
+-depends=('liblmdb' 'openssl' 'pcre' 'libxml2')
++depends=('lmdb' 'openssl' 'pcre' 'libxml2')
+ makedepends=('which')
+ optdepends=('libvirt' 'postgresql-libs' 'libmariadbclient' 'acl')
+ install=${pkgname}.install
+-source=("${pkgname}-${pkgver}.tar.gz::https://s3.amazonaws.com/cfengine.package-repos/tarballs/${pkgname}-${pkgver}.tar.gz"
++source=("${pkgname}-${pkgver}.tar.gz::https://cfengine-package-repos.s3.amazonaws.com/tarballs/${pkgname}-${pkgver}.tar.gz"
++        "https://cfengine-package-repos.s3.amazonaws.com/tarballs/cfengine-masterfiles-${pkgver}.tar.gz"
+         'cf-execd.service'
+         'cf-monitord.service'
+         'cf-serverd.service')
+-md5sums=('76754e9aa7498a614012e0c064b37cbe'
++md5sums=('aff92abe87a5424680afd285d0384bef'
++         'dba17dc5133b8fa86de11577120d46c5'
+          'dba17dc5133b8fa86de11577120d46c5'
+          'a2f9db31408f288cb934397ffb474db3'
+          'ff28f7de9b81b4673082a2640a318896')
+-- 
+2.7.0
+
+
+From 6f0a18aff08fe1fc170df759764fa78321e52ef2 Mon Sep 17 00:00:00 2001
+From: "Vanush \"Misha\" Paturyan" <misha@cs.nuim.ie>
+Date: Sat, 20 Feb 2016 12:42:40 +0000
+Subject: [PATCH 3/4] installing stock policy (CoreBase)
+
+Upstream distributes stock policy through a different channel. Donwload
+and install it into /usr/share/doc/cfengine/CoreBase, and then copy it
+into /var/cfengine/masterfiles as part of a post-install script.
+---
+ PKGBUILD         | 35 +++++++++++++++++++++++++----------
+ cfengine.install | 34 +++++++++++++++++++++++++---------
+ 2 files changed, 50 insertions(+), 19 deletions(-)
+
+diff --git a/PKGBUILD b/PKGBUILD
+index d314757..fdb379c 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -22,13 +22,13 @@ source=("${pkgname}-${pkgver}.tar.gz::https://cfengine-package-repos.s3.amazonaw
+         'cf-monitord.service'
+         'cf-serverd.service')
+ md5sums=('aff92abe87a5424680afd285d0384bef'
+-         'dba17dc5133b8fa86de11577120d46c5'
++         '48335259f199c87c2d7652ed8405f21c'
+          'dba17dc5133b8fa86de11577120d46c5'
+          'a2f9db31408f288cb934397ffb474db3'
+          'ff28f7de9b81b4673082a2640a318896')
+ 
+ build() {
+-	cd ${srcdir}/${pkgname}-${pkgver}
++  cd ${srcdir}/${pkgname}-${pkgver}
+ 
+   ./configure \
+     --prefix=/usr \
+@@ -43,19 +43,34 @@ build() {
+     --with-postgresql=check
+ 
+   make
++  # now build masterfiles
++  cd ${srcdir}/${pkgname}-masterfiles-${pkgver}
++  ./configure \
++      --prefix=/usr/share/doc/cfengine/CoreBase \
++      --with-core=../cfengine-${pkgver}
+ }
+ 
+ package() {
+-	cd ${srcdir}/${pkgname}-${pkgver}
++  cd ${srcdir}/${pkgname}-${pkgver}
++  make DESTDIR=$pkgdir install
+ 
+-	make DESTDIR=$pkgdir install
++  # masterfiles
++  cd ${srcdir}/${pkgname}-masterfiles-${pkgver}
++  make DESTDIR=$pkgdir install
++  
++  install -D -m644 ${srcdir}/cf-execd.service \
++	  ${pkgdir}/usr/lib/systemd/system/cf-execd.service
++  install -D -m644 ${srcdir}/cf-serverd.service \
++	  ${pkgdir}/usr/lib/systemd/system/cf-serverd.service
++  install -D -m644 ${srcdir}/cf-monitord.service \
++	  ${pkgdir}/usr/lib/systemd/system/cf-monitord.service
+ 
+-	install -D -m644 ${srcdir}/cf-execd.service \
+-		${pkgdir}/usr/lib/systemd/system/cf-execd.service
+-	install -D -m644 ${srcdir}/cf-serverd.service \
+-		${pkgdir}/usr/lib/systemd/system/cf-serverd.service
+-	install -D -m644 ${srcdir}/cf-monitord.service \
+-		${pkgdir}/usr/lib/systemd/system/cf-monitord.service
++  install -d -m755 ${pkgdir}/var/cfengine/bin
++  install -d -m755 ${pkgdir}/var/cfengine/masterfiles
++  
++  for f in $(ls ${pkgdir}/usr/bin); do
++    /bin/ln -s /usr/bin/$f ${pkgdir}/var/cfengine/bin
++  done
+ }
+ 
+ # vim:set ts=2 sw=2 et:
+diff --git a/cfengine.install b/cfengine.install
+index fad7bba..d9820b5 100644
+--- a/cfengine.install
++++ b/cfengine.install
+@@ -1,19 +1,35 @@
++PREFIX=/var/cfengine
++
+ post_install() {
+ 
+- if [ ! -f /var/cfengine/ppkeys/localhost.priv ]; then
+-  cf-key > /dev/null
++# generate a host key
++ if [ ! -f $PREFIX/ppkeys/localhost.priv ]; then
++  $PREFIX/bin/cf-key > /dev/null
+  fi 
+ 
+- if ! [ -f /var/cfengine/masterfiles/promises.cf ]; then
+-  cp -R /usr/share/CoreBase/* /var/cfengine/masterfiles/
++# copy the stock policy for the new installations and create promies_validated
++ if ! [ -f $PREFIX/masterfiles/promises.cf ]; then
++  /bin/cp -R /usr/share/doc/cfengine/CoreBase/masterfiles/* $PREFIX/masterfiles/
++  $PREFIX/bin/cf-promises -T $PREFIX/masterfiles
++ fi
++
++# copy modules/packages (part of stock policy)
++ if ! [ -f $PREFIX/modules/packages ]; then
++   mkdir -p $PREFIX/modules/packages
+  fi
+- 
+- if ! [ -f /var/cfengine/bin/cf-promises ]; then
+-  cd /var/cfengine/bin
+-  ln -s /usr/bin/cf-* .
++ if cd /usr/share/doc/cfengine/CoreBase/modules/packages; then
++  for module in *; do
++    if ! [ -f $PREFIX/modules/packages/$module ]; then
++      cp $module $PREFIX/modules/packages
++    fi
++  done
+  fi
++ #if ! [ -f /var/cfengine/bin/cf-promises ]; then
++ # cd /var/cfengine/bin
++ # ln -s /usr/bin/cf-* .
++ #fi
+ 
+- echo "Bootstrap cfengine with cf-agent --bootstrap <IP address of policy server>"
++ echo -e "\nBootstrap cfengine with cf-agent --bootstrap <IP address of policy server>\n"
+ 
+ }
+ post_remove() {
+-- 
+2.7.0
+
+
+From 71d377eed1e84a3f1707e62cc50c8a629b145b1a Mon Sep 17 00:00:00 2001
+From: "Vanush \"Misha\" Paturyan" <misha@cs.nuim.ie>
+Date: Sat, 20 Feb 2016 13:51:46 +0000
+Subject: [PATCH 4/4] adding pam to the list of dependencies
+
+---
+ PKGBUILD | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/PKGBUILD b/PKGBUILD
+index fdb379c..b790dfa 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -12,7 +12,7 @@ pkgdesc='Automated suite of programs for configuring and maintaining Unix-like c
+ url='http://www.cfengine.org'
+ license=('GPL3')
+ arch=('i686' 'x86_64')
+-depends=('lmdb' 'openssl' 'pcre' 'libxml2')
++depends=('lmdb' 'openssl' 'pcre' 'libxml2' 'pam')
+ makedepends=('which')
+ optdepends=('libvirt' 'postgresql-libs' 'libmariadbclient' 'acl')
+ install=${pkgname}.install
+-- 
+2.7.0
+
