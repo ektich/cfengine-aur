@@ -57,7 +57,7 @@ package() {
   # masterfiles
   cd ${srcdir}/${pkgname}-masterfiles-${pkgver}
   make DESTDIR=$pkgdir install
-  
+
   install -D -m644 ${srcdir}/cf-execd.service \
 	  ${pkgdir}/usr/lib/systemd/system/cf-execd.service
   install -D -m644 ${srcdir}/cf-serverd.service \
@@ -67,7 +67,7 @@ package() {
 
   install -d -m755 ${pkgdir}/var/cfengine/bin
   install -d -m755 ${pkgdir}/var/cfengine/masterfiles
-  
+
   for f in $(ls ${pkgdir}/usr/bin); do
     /bin/ln -s /usr/bin/$f ${pkgdir}/var/cfengine/bin
   done
