@@ -5,6 +5,6 @@ USER root
 
 RUN pacman --refresh --sync --noconfirm --noprogressbar base-devel
 RUN pacman --sync --sysupgrade --noconfirm --noprogressbar
-RUN pacman --sync --noconfirm --noprogressbar  lmdb libxml2
+RUN pacman --sync --noconfirm --noprogressbar  lmdb libxml2 libyaml
 
 USER build
